@@ -103,12 +103,12 @@ extern NSString *const PSControlMaximumKey;
 @interface PRDiscreteSliderCell : PSSliderTableCell
 @end
 @implementation PRDiscreteSliderCell
-- (id)initWithStyle:(UITableViewCellStyle)arg1 reuseIdentifier:(id)arg2 specifier:(id)arg3 
+- (id)initWithStyle:(UITableViewCellStyle)arg1 reuseIdentifier:(id)arg2 specifier:(id)arg3
 {
     self = [super initWithStyle:arg1 reuseIdentifier:arg2 specifier:arg3];
-    
-    if (self) 
-    {     
+
+    if (self)
+    {
         UIDiscreteSlider *actual = [[UIDiscreteSlider alloc] initWithFrame:self.control.frame];
         [actual addTarget:self action:@selector(saveValue) forControlEvents:UIControlEventTouchUpInside];
         actual.increment = [([self.specifier propertyForKey:@"increment"] ?: @1) floatValue];
@@ -137,18 +137,18 @@ extern NSString *const PSControlMaximumKey;
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:plistName];
     [dict setObject:value forKey:@"numSpacers"];
     [dict writeToFile:plistName atomically:YES];
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/reloadSettings"), nil, nil, YES);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/reloadSettings"), nil, nil, YES);
 }
 @end
 @interface PRDiscreteSliderCell2 : PSSliderTableCell
 @end
 @implementation PRDiscreteSliderCell2
-- (id)initWithStyle:(UITableViewCellStyle)arg1 reuseIdentifier:(id)arg2 specifier:(id)arg3 
+- (id)initWithStyle:(UITableViewCellStyle)arg1 reuseIdentifier:(id)arg2 specifier:(id)arg3
 {
     self = [super initWithStyle:arg1 reuseIdentifier:arg2 specifier:arg3];
-    
-    if (self) 
-    {     
+
+    if (self)
+    {
         UIDiscreteSlider *actual = [[UIDiscreteSlider alloc] initWithFrame:self.control.frame];
         [actual addTarget:self action:@selector(saveValue) forControlEvents:UIControlEventTouchUpInside];
         actual.increment = 0.5;
@@ -177,20 +177,20 @@ extern NSString *const PSControlMaximumKey;
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:plistName];
     [dict setObject:value forKey:@"padding"];
     [dict writeToFile:plistName atomically:YES];
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/reloadSettings"), nil, nil, YES);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/reloadSettings"), nil, nil, YES);
 }
 @end
 
 @implementation ProteanSettingsListController
 -(NSString*) headerText { return @"Protean"; }
--(NSString*) headerSubText 
+-(NSString*) headerSubText
 {
-    NSArray *choices = @[ 
+    NSArray *choices = @[
         @"Your status bar, your way",
         @"The ultimate status bar customizer",
         @"By Elijah and Andrew",
         @"Status bar is looking splendid today!",
-    ]; 
+    ];
 
     NSUInteger randomIndex = arc4random() % [choices count];
     return choices[randomIndex];
@@ -208,16 +208,16 @@ extern NSString *const PSControlMaximumKey;
 -(NSArray*) customSpecifiers
 {
     return @[
-             
+
              @{ @"cell": @"PSGroupCell"
                 },
              @{
                  @"cell": @"PSSwitchCell",
                  @"default": @YES,
-                 @"defaults": @"com.efrederickson.protean.settings",
+                 @"defaults": @"com.shade.protean.settings",
                  @"key": @"enabled",
                  @"label": @"Enabled",
-                 @"PostNotification": @"com.efrederickson.protean/reloadSettings",
+                 @"PostNotification": @"com.shade.protean/reloadSettings",
                  //@"cellClass": @"SKTintedSwitchCell",
                  @"icon": @"enabled.png",
                  },
@@ -233,7 +233,7 @@ extern NSString *const PSControlMaximumKey;
                  @"label": @"Organization",
                  @"icon": @"organization.png"
                  },
-             
+
              @{ @"cell": @"PSGroupCell",
                 @"footerText": @"Select applications, flipswitches, and others to be represented by a glyph in the status bar."
                 },
@@ -282,7 +282,7 @@ extern NSString *const PSControlMaximumKey;
                 @"label": @"Advanced Options",
                 @"icon": @"settings.png"
             },
-             
+
              @{ @"cell": @"PSGroupCell" },
              @{
                  @"cell": @"PSLinkCell",
@@ -300,9 +300,9 @@ extern NSString *const PSControlMaximumKey;
                  @"icon": @"documentation.png",
                  //@"cellClass": @"SKTintedCell",
                  },
-             
+
              @{ @"cell": @"PSGroupCell",
-                @"footerText": [NSString stringWithFormat:@"© 2014-2015 Elijah Frederickson & Andrew Abosh.%@%@", 
+                @"footerText": [NSString stringWithFormat:@"© 2014-2015 Elijah Frederickson & Andrew Abosh.%@%@",
                     LIBSTATUSBAR8 ? @"\nLibStatusBar8 support is in use." : @"",
                     [objc_getClass("LibStatusBar8") respondsToSelector:@selector(getCurrentExtensions)] ? [NSString stringWithFormat:@"\n%ld Current LibStatusBar8 extension(s) in use.",(unsigned long)[objc_getClass("LibStatusBar8") getCurrentExtensions].count] : @"" ] },
              @{
@@ -322,16 +322,16 @@ extern NSString *const PSControlMaximumKey;
         mailViewController = [[MFMailComposeViewController alloc] init];
         mailViewController.mailComposeDelegate = self;
         [mailViewController setSubject:@"Protean"];
-        
+
         struct utsname systemInfo;
         uname(&systemInfo);
         NSString *sysInfo = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
-        
-        NSString *msg = [NSString stringWithFormat:@"\n\n%@ %@\nModel: %@\nProtean version: %@\nLibstatusbar8: %@", [UIDevice currentDevice].systemName, [UIDevice currentDevice].systemVersion, sysInfo, 
+
+        NSString *msg = [NSString stringWithFormat:@"\n\n%@ %@\nModel: %@\nProtean version: %@\nLibstatusbar8: %@", [UIDevice currentDevice].systemName, [UIDevice currentDevice].systemVersion, sysInfo,
             PROTEAN_VERSION, LIBSTATUSBAR8 ? @"Yes" : @"No"];
         [mailViewController setMessageBody:msg isHTML:NO];
         [mailViewController setToRecipients:@[@"elijahandandrew@gmail.com"]];
-            
+
         [self.rootController presentViewController:mailViewController animated:YES completion:nil];
     }
 
@@ -349,18 +349,18 @@ extern NSString *const PSControlMaximumKey;
                                             ];
 	controller.rootController = self.rootController;
 	controller.parentController = self;
-	
+
 	[self pushController:controller];
 }
 
 -(void)setPreferenceValue:(id)value specifier:(PSSpecifier*)specifier
 {
     //[super setPreferenceValue:value specifier:specifier];
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:@"/var/mobile/Library/Preferences/com.efrederickson.protean.settings.plist"];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:@"/var/mobile/Library/Preferences/com.shade.protean.settings.plist"];
     [dict setObject:value forKey:[specifier propertyForKey:@"key"]];
-    [dict writeToFile:@"/var/mobile/Library/Preferences/com.efrederickson.protean.settings.plist" atomically:YES];
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/reloadSettings"), nil, nil, YES);
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/refreshStatusBar"), nil, nil, YES);
+    [dict writeToFile:@"/var/mobile/Library/Preferences/com.shade.protean.settings.plist" atomically:YES];
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/reloadSettings"), nil, nil, YES);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/refreshStatusBar"), nil, nil, YES);
 }
 
  -(id)readPreferenceValue:(PSSpecifier*)specifier
@@ -395,7 +395,7 @@ extern NSString *const PSControlMaximumKey;
     NSNumber *defaultPadding = ((NSDictionary*)[objc_getClass("Protean") performSelector:@selector(getOrLoadSettings)])[@"defaultPadding"] ?: @6;
 
     return @[
-                @{ 
+                @{
                  @"cell": @"PSGroupCell",
                  @"label": @"Item Spacing",
                  @"footerText": @"Change the spacing between items."
@@ -404,16 +404,16 @@ extern NSString *const PSControlMaximumKey;
                  @"cell": @"PSSliderCell",
                  //@"cellClass": @"PRDiscreteSliderCell2", < Crashes iOS 8.2+. TODO: FIXME
                  @"default": defaultPadding,
-                 @"defaults": @"com.efrederickson.protean.settings",
+                 @"defaults": @"com.shade.protean.settings",
                  @"key": @"padding",
-                 @"PostNotification": @"com.efrederickson.protean/reloadSettings",
+                 @"PostNotification": @"com.shade.protean/reloadSettings",
                  @"min": @0,
                  @"max": @10,
                  @"increment": @0.5,
                  @"showValue": @YES,
                  },
-                
-                @{ 
+
+                @{
                  @"cell": @"PSGroupCell",
                  @"label": @"Number of Spacers",
                  @"footerText": @"Change the number of spacers available."
@@ -422,9 +422,9 @@ extern NSString *const PSControlMaximumKey;
                  @"cell": @"PSSliderCell",
                  @"cellClass": @"PRButtonPlusMinusThingCell",
                  @"default": @0,
-                 @"defaults": @"com.efrederickson.protean.settings",
+                 @"defaults": @"com.shade.protean.settings",
                  @"key": @"numSpacers",
-                 @"PostNotification": @"com.efrederickson.protean/reloadSettings",
+                 @"PostNotification": @"com.shade.protean/reloadSettings",
                  @"min": @0,
                  @"max": @50,
                  //@"increment": @1,
@@ -432,28 +432,28 @@ extern NSString *const PSControlMaximumKey;
                  @"label": @"%d Spacer(s)"
                  },
 
-             	@{ 
+             	@{
         		 @"cell": @"PSGroupCell",
                  @"footerText": @"Equalizes the height of the lock screen and home screen status bar."
                  },
                 @{
                  @"cell": @"PSSwitchCell",
                  @"default": @YES,
-                 @"defaults": @"com.efrederickson.protean.settings",
+                 @"defaults": @"com.shade.protean.settings",
                  @"key": @"normalizeLS",
                  @"label": @"Normalize Lock Screen",
-                 @"PostNotification": @"com.efrederickson.protean/reloadSettings",
+                 @"PostNotification": @"com.shade.protean/reloadSettings",
                  @"icon": @"normalizeLS.png"
                  },
-                
+
                 /*@{},
              @{
                  @"cell": @"PSSwitchCell",
                  @"default": @NO,
-                 @"defaults": @"com.efrederickson.protean.settings",
+                 @"defaults": @"com.shade.protean.settings",
                  @"key": @"showSignalRSSI",
                  @"label": @"Show Signal RSSI",
-                 @"PostNotification": @"com.efrederickson.protean/reloadSettings",
+                 @"PostNotification": @"com.shade.protean/reloadSettings",
                  @"icon": @"signalrssi.png"
                  },
              @{
@@ -465,17 +465,17 @@ extern NSString *const PSControlMaximumKey;
                  @"PostNotification": @"com.apple.springboard/Prefs",
                  @"icon": @"wifirssi.png"
                  },
-             
+
              @{ @"cell": @"PSGroupCell",
                 @"footerText": @"Enabled by default if the time is not aligned in the center. Unlike many other tweaks, it is compatible with LockInfo7 and Forecast."
                 },
              @{
                  @"cell": @"PSSwitchCell",
                  @"default": @YES,
-                 @"defaults": @"com.efrederickson.protean.settings",
+                 @"defaults": @"com.shade.protean.settings",
                  @"key": @"showLSTime",
                  @"label": @"Show LS Time",
-                 @"PostNotification": @"com.efrederickson.protean/reloadSettings",
+                 @"PostNotification": @"com.shade.protean/reloadSettings",
                  @"icon": @"showLSTime.png"
                  },*/
              @{ @"cell": @"PSGroupCell",
@@ -484,10 +484,10 @@ extern NSString *const PSControlMaximumKey;
              @{
                  @"cell": @"PSSwitchCell",
                  @"default": @NO,
-                 @"defaults": @"com.efrederickson.protean.settings",
+                 @"defaults": @"com.shade.protean.settings",
                  @"key": @"useNC",
                  @"label": @"Use Notification Center Data",
-                 @"PostNotification": @"com.efrederickson.protean/reloadSettings",
+                 @"PostNotification": @"com.shade.protean/reloadSettings",
                  @"icon": @"usenc.png"
                  },
 
@@ -497,10 +497,10 @@ extern NSString *const PSControlMaximumKey;
              @{
                  @"cell": @"PSSwitchCell",
                  @"default": @NO,
-                 @"defaults": @"com.efrederickson.protean.settings",
+                 @"defaults": @"com.shade.protean.settings",
                  @"key": @"defaultAlignToRight",
                  @"label": @"Default Glyphs to the Right",
-                 @"PostNotification": @"com.efrederickson.protean/reloadSettings",
+                 @"PostNotification": @"com.shade.protean/reloadSettings",
                  @"icon": @"defaulttoright.png"
                  },
 
@@ -511,16 +511,16 @@ extern NSString *const PSControlMaximumKey;
              @{
                  @"cell": @"PSLinkListCell",
                  @"default": @0,
-                 @"defaults": @"com.efrederickson.protean.settings",
+                 @"defaults": @"com.shade.protean.settings",
                  @"key": @"batteryStyle",
                  @"label": @"Battery Percentage Style",
-                 @"PostNotification": @"com.efrederickson.protean/reloadSettings",
+                 @"PostNotification": @"com.shade.protean/reloadSettings",
                  @"detail": @"SKListItemsController",
                  @"icon": @"batteryStyle.png",
-                 @"validTitles": 
+                 @"validTitles":
                     supportsExtendedBattery ? @[ @"Default", @"Hide '%' sign", @"Textual", @"mAh charge", @"Actual percentage (mAh/capacity)", @"Longer actual percentage", @"Longer actual percentage with no '%'", @"Textual with Percent", @"Actual with no percent" ]
                     : @[ @"Default", @"Hide '%' sign", @"Textual", @"Textual with Percent" ],
-                 @"validValues": 
+                 @"validValues":
                     supportsExtendedBattery ? @[ @0,         @1,               @2,         @3,            @4,                                @5,                             @6, 									 @7, @8 ]
                     : @[ @0, @1, @2, @7 ],
                  },
@@ -529,69 +529,69 @@ extern NSString *const PSControlMaximumKey;
                     @"cell": @"PSLinkCell",
                     @"cellClass": @"PFColorCell",
                     @"label": @"Battery Percentage Color (charging)",
-                    @"color_defaults": @"com.efrederickson.protean.settings",
+                    @"color_defaults": @"com.shade.protean.settings",
                     @"color_key": @"chargingPercentageColor",
                     @"title": @"Charging Color",
                     @"color_fallback": @"#000000",
                     @"usesRGB": @YES,
                     @"usesAlpha": @NO,
-                    @"color_postNotification": @"com.efrederickson.protean/reloadSettings"
+                    @"color_postNotification": @"com.shade.protean/reloadSettings"
                  },
                  @{
                     @"cell": @"PSLinkCell",
                     @"cellClass": @"PFColorCell",
                     @"label": @"Battery Percentage Color (not charging)",
-                    @"color_defaults": @"com.efrederickson.protean.settings",
+                    @"color_defaults": @"com.shade.protean.settings",
                     @"color_key": @"notChargingPercentageColor",
                     @"title": @"Charging Color",
                     @"color_fallback": @"#000000",
                     @"usesRGB": @YES,
                     @"usesAlpha": @NO,
-                    @"color_postNotification": @"com.efrederickson.protean/reloadSettings"
+                    @"color_postNotification": @"com.shade.protean/reloadSettings"
                  },
 
              /*@{
                  @"cell": @"PSEditTextCell",
                  @"default": @"",
-                 @"defaults": @"com.efrederickson.protean.settings",
+                 @"defaults": @"com.shade.protean.settings",
                  @"key": @"serviceString",
                  @"label": @"Custom Carrier:",
-                 @"PostNotification": @"com.efrederickson.protean/reloadSettings",
+                 @"PostNotification": @"com.shade.protean/reloadSettings",
                  @"icon": @"carriername.png",
                  },
              @{
                  @"cell": @"PSSwitchCell",
                  @"default": @NO,
-                 @"defaults": @"com.efrederickson.protean.settings",
+                 @"defaults": @"com.shade.protean.settings",
                  @"key": @"serviceIsTimeString",
                  @"label": @"Use carrier as time format",
-                 @"PostNotification": @"com.efrederickson.protean/reloadSettings",
+                 @"PostNotification": @"com.shade.protean/reloadSettings",
                  },
              @{
                  @"cell": @"PSEditTextCell",
                  @"default": @"h:mm a",
-                 @"defaults": @"com.efrederickson.protean.settings",
+                 @"defaults": @"com.shade.protean.settings",
                  @"key": @"timeFormat",
                  @"label": @"Custom Time Format:",
-                 @"PostNotification": @"com.efrederickson.protean/reloadSettings",
+                 @"PostNotification": @"com.shade.protean/reloadSettings",
                  @"icon": @"timeformat.png",
                  },
              @{
                  @"cell": @"PSSwitchCell",
                  @"default": @NO,
-                 @"defaults": @"com.efrederickson.protean.settings",
+                 @"defaults": @"com.shade.protean.settings",
                  @"key": @"lowercaseAMPM",
                  @"label": @"Lowercase AM/PM",
-                 @"PostNotification": @"com.efrederickson.protean/reloadSettings",
+                 @"PostNotification": @"com.shade.protean/reloadSettings",
                  @"icon": @"lowercaseampm.png"
                  },
              @{
                  @"cell": @"PSSwitchCell",
                  @"default": @NO,
-                 @"defaults": @"com.efrederickson.protean.settings",
+                 @"defaults": @"com.shade.protean.settings",
                  @"key": @"spellOut",
                  @"label": @"Spell Out Time (12h)",
-                 @"PostNotification": @"com.efrederickson.protean/reloadSettings",
+                 @"PostNotification": @"com.shade.protean/reloadSettings",
                  @"icon": @"lowercaseampm.png"
                  },*/
 
@@ -601,10 +601,10 @@ extern NSString *const PSControlMaximumKey;
              @{
                  @"cell": @"PSSwitchCell",
                  @"default": @NO,
-                 @"defaults": @"com.efrederickson.protean.settings",
+                 @"defaults": @"com.shade.protean.settings",
                  @"key": @"allowOverlap",
                  @"label": @"Don't Cut Off Items",
-                 @"PostNotification": @"com.efrederickson.protean/reloadSettings",
+                 @"PostNotification": @"com.shade.protean/reloadSettings",
                  @"icon": @"allowOverlap.png"
                  },
 
@@ -623,14 +623,14 @@ extern NSString *const PSControlMaximumKey;
                  @"icon": @"respring.png"
                  }
 
-             ]; 
+             ];
 }
 
--(void)viewWillAppear:(BOOL)animated 
+-(void)viewWillAppear:(BOOL)animated
 {
     //[self clearCache];
     [self reload];
-    [super viewWillAppear:animated]; 
+    [super viewWillAppear:animated];
 }
 
 -(void) resetData
@@ -640,11 +640,11 @@ extern NSString *const PSControlMaximumKey;
     [alert show];
 }
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex 
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex == 1) 
+    if (buttonIndex == 1)
     {
-        [NSFileManager.defaultManager removeItemAtPath:@"/User/Library/Preferences/com.efrederickson.protean.settings.plist" error:nil];
+        [NSFileManager.defaultManager removeItemAtPath:@"/User/Library/Preferences/com.shade.protean.settings.plist" error:nil];
         [self respring];
     }
 }
@@ -679,14 +679,14 @@ extern NSString *const PSControlMaximumKey;
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:plistName];
     [dict setObject:value forKey:[specifier propertyForKey:@"key"]];
     [dict writeToFile:plistName atomically:YES];
-    
+
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge CFStringRef)[specifier propertyForKey:@"PostNotification"], nil, nil, YES);
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/refreshStatusBar"), nil, nil, YES);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/refreshStatusBar"), nil, nil, YES);
 }
 @end
 
 
-@interface PRDocumentationListController () 
+@interface PRDocumentationListController ()
 {
 	UIWebView *webView;
 }
@@ -698,7 +698,7 @@ extern NSString *const PSControlMaximumKey;
     if ((self = [super initForContentSize:size]))
     {
         webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)];
-        
+
         [self setView:webView];
         webView.delegate = self;
         webView.backgroundColor = [UIColor whiteColor];
@@ -731,17 +731,17 @@ extern NSString *const PSControlMaximumKey;
 [self.navigationController setNavigationBarHidden:NO animated:YES];
 
     [super viewWillDisappear:animated];
-    
+
     ((UIView*)self.view).tintColor = nil;
     self.navigationController.navigationBar.tintColor = nil;
 }
 
--(BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType; 
+-(BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType;
 {
-    NSURL *requestURL = request.URL; 
-    if (([requestURL.scheme isEqualToString:@"http"] || [requestURL.scheme isEqualToString:@"https"] || [requestURL.scheme isEqualToString:@"mailto"]) && (navigationType == UIWebViewNavigationTypeLinkClicked)) 
-    { 
-        return ![[UIApplication sharedApplication] openURL:requestURL]; 
+    NSURL *requestURL = request.URL;
+    if (([requestURL.scheme isEqualToString:@"http"] || [requestURL.scheme isEqualToString:@"https"] || [requestURL.scheme isEqualToString:@"mailto"]) && (navigationType == UIWebViewNavigationTypeLinkClicked))
+    {
+        return ![[UIApplication sharedApplication] openURL:requestURL];
     }
     if ([requestURL.absoluteString isEqual:@"internal://back-to-settings"])
     {
@@ -749,9 +749,9 @@ extern NSString *const PSControlMaximumKey;
     }
     if ([[requestURL.absoluteString substringToIndex:16] isEqual:@"internal://open?"])
     {
-        return ![[UIApplication sharedApplication] openURL:[NSURL URLWithString:[requestURL.absoluteString substringFromIndex:16]]]; 
+        return ![[UIApplication sharedApplication] openURL:[NSURL URLWithString:[requestURL.absoluteString substringFromIndex:16]]];
     }
-    return YES; 
+    return YES;
 }
 @end
 
@@ -767,4 +767,3 @@ static __attribute__((constructor)) void __wbsInit() {
     WBSAddMethod(PSViewController, hideNavigationBarButtons, $PSViewController$hideNavigationBarButtons, "v@:");
     WBSAddMethod(PSViewController, initForContentSize:, $PSViewController$initForContentSize$, "@@:{ff}");
 }
-

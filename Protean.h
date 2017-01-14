@@ -2,17 +2,17 @@
 
 @interface Protean : NSObject
 
-+(BOOL) canHandleTapForItem:(UIStatusBarItem*)item;
-+(id) HandlerForTapOnItem:(UIStatusBarItem*)item;
++ (BOOL)canHandleTapForItem:(UIStatusBarItem*)item;
++ (id)HandlerForTapOnItem:(UIStatusBarItem*)item;
 
-+(void) mapIdentifierToItem:(NSString*)identifier item:(int)type;
-+(NSString*) mappedIdentifierForItem:(int)type;
-+(void) mapIdentifierToItem:(NSString*)identifier;
++ (void)mapIdentifierToItem:(NSString*)identifier item:(int)type;
++ (NSString*)mappedIdentifierForItem:(int)type;
++ (void)mapIdentifierToItem:(NSString*)identifier;
 
-+(NSString*)imageNameForIdentifier:(NSString*)identifier;
-+(NSString*)imageNameForIdentifier:(NSString*)identifier withBadgeCount:(int)count;
++ (NSString*)imageNameForIdentifier:(NSString*)identifier;
++ (NSString*)imageNameForIdentifier:(NSString*)identifier withBadgeCount:(int)count;
 
-+(NSMutableDictionary*) getOrLoadSettings;
++ (NSMutableDictionary*)getOrLoadSettings;
 
-+(void) reloadSettings;
++ (void)reloadSettings;
 @end

@@ -59,12 +59,12 @@
                  },
              @{
                  @"cell": @"PSLinkCell",
-                 @"label": @"libstatusbar (efrederickson)",
+                 @"label": @"libstatusbar (shade)",
                  @"action": @"openGithub2",
                  @"icon": @"github.png"
                  },
-             
-            /* 
+
+            /*
              @{ @"cell": @"PSGroupCell",
                 @"label": @"Recommended Themes" },
              @{
@@ -119,7 +119,7 @@
                  @"action": @"openZeppelin",
                  @"icon": @"zeppelin.png"
                  },*/
-             
+
              @{ @"cell": @"PSGroupCell",
                 @"footerText": @"Acknowledgments: \n\
 \n\
@@ -197,7 +197,7 @@ THE SOFTWARE. \n\
 
 -(void) openRSSIPeek
 {
-	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"cydia://package/com.efrederickson.rssipeek"]];
+	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"cydia://package/com.shade.rssipeek"]];
 }
 
 -(void) openZeppelin

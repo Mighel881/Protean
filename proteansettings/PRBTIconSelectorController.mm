@@ -2,7 +2,7 @@
 #import <AppList/AppList.h>
 #import <libactivator/libactivator.h>
 #import <objc/runtime.h>
-#define PLIST_NAME @"/var/mobile/Library/Preferences/com.efrederickson.protean.settings.plist"
+#define PLIST_NAME @"/var/mobile/Library/Preferences/com.shade.protean.settings.plist"
 
 NSString* const vectorIconPath = @"/Library/Protean/TranslatedVectors~cache/";
 NSString* const iconPath = @"/Library/Protean/Images.bundle";
@@ -43,24 +43,24 @@ extern UIImage *imageFromName(NSString *name);
 {
     NSMutableDictionary *prefs = [NSMutableDictionary dictionaryWithContentsOfFile:PLIST_NAME];
     prefs = prefs ?: [NSMutableDictionary dictionary];
-    
+
     prefs[@"images"] = prefs[@"images"] ? [prefs[@"images"] mutableCopy]: [NSMutableDictionary dictionary];
     prefs[@"images"][_identifier] = [checkedIcon isEqual:@"None"] ? @"" : checkedIcon;
-    
+
     prefs[@"tapActions"] = prefs[@"tapActions"] ? [prefs[@"tapActions"] mutableCopy]: [NSMutableDictionary dictionary];
     prefs[@"tapActions"][_identifier] = [NSNumber numberWithInt:tapAction==1?2:0] ?: @0;
-    
+
     [prefs writeToFile:PLIST_NAME atomically:YES];
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/reloadSettings"), nil, nil, YES);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/reloadSettings"), nil, nil, YES);
 }
 
 -(id)init
 {
     tapAction = 0;
     checkedIcon = @"";
-    
+
 	if ((self = [super init]) == nil) return nil;
-	
+
 	if (!defaultIcon)
         defaultIcon = [[ALApplicationList sharedApplicationList] iconOfSize:ALApplicationIconSizeSmall forDisplayIdentifier:@"com.apple.WebSheet"];
 	if (!statusIcons)
@@ -68,7 +68,7 @@ extern UIImage *imageFromName(NSString *name);
 		statusIcons = [[NSMutableArray alloc] init];
 		NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:SilverIconRegexPattern
                                                                                options:NSRegularExpressionCaseInsensitive error:nil];
-        
+
 		for (NSString* path in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:iconPath error:nil])
 		{
 			NSTextCheckingResult* match = [regex firstMatchInString:path options:0 range:NSMakeRange(0, path.length)];
@@ -76,7 +76,7 @@ extern UIImage *imageFromName(NSString *name);
 			NSString* name = [path substringWithRange:[match rangeAtIndex:1]];
 			if (![statusIcons containsObject:name]) [statusIcons addObject:name];
 		}
-            
+
         for (NSString* path in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:vectorIconPath error:nil])
         {
             NSTextCheckingResult* match = [regex firstMatchInString:path options:0 range:NSMakeRange(0, path.length)];
@@ -84,30 +84,30 @@ extern UIImage *imageFromName(NSString *name);
             NSString* name = [path substringWithRange:[match rangeAtIndex:1]];
             if (![statusIcons containsObject:name]) [statusIcons addObject:name];
         }
-        
+
         regex = [NSRegularExpression regularExpressionWithPattern:@"Black_ON_(.*?)(?:@.*|)(?:~.*|).png"
                                                           options:NSRegularExpressionCaseInsensitive error:nil];
-        
+
         for (NSString* path in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/System/Library/Frameworks/UIKit.framework" error:nil])
 		{
 			NSTextCheckingResult* match = [regex firstMatchInString:path options:0 range:NSMakeRange(0, path.length)];
 			if (!match) continue;
 			NSString* name = [path substringWithRange:[match rangeAtIndex:1]];
-            
+
             if ([name hasPrefix:@"Count"])
                 continue;
-            
+
 			if (![statusIcons containsObject:name]) [statusIcons addObject:name];
 		}
 	}
-    
-    
+
+
     NSMutableDictionary *prefs = [NSMutableDictionary dictionaryWithContentsOfFile:PLIST_NAME];
     prefs = prefs ?: [NSMutableDictionary dictionary];
-    
+
     checkedIcon = ([prefs[@"images"] mutableCopy] ?: [NSMutableDictionary dictionary])[_identifier] ?: @"";
     tapAction = [([prefs[@"tapActions"] mutableCopy] ?: [NSMutableDictionary dictionary])[_identifier] intValue] == 2 ? 1 : 0;
-    
+
     CGRect bounds = [[UIScreen mainScreen] bounds];
     _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, bounds.size.height) style:UITableViewStyleGrouped];
 	_tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -118,11 +118,11 @@ extern UIImage *imageFromName(NSString *name);
     [_tableView setAllowsMultipleSelection:NO];
     [_tableView setAllowsSelectionDuringEditing:YES];
     [_tableView setAllowsMultipleSelectionDuringEditing:NO];
-    
+
     [self setView:_tableView];
-    
+
     [self setTitle:_appName];
-    
+
     [statusIcons sortUsingComparator: ^(NSString* a, NSString* b) {
         bool e1 = [checkedIcon isEqual:a];
         bool e2 = [checkedIcon isEqual:b];
@@ -141,19 +141,19 @@ extern UIImage *imageFromName(NSString *name);
     _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     //if ([_searchBar respondsToSelector:@selector(setUsesEmbeddedAppearance:)])
     //    [_searchBar setUsesEmbeddedAppearance:true];
-    
+
     searchDisplayController = [[UISearchDisplayController alloc] initWithSearchBar:_searchBar contentsController:(UIViewController*)self];
     searchDisplayController.delegate = self;
     searchDisplayController.searchResultsDataSource = self;
     searchDisplayController.searchResultsDelegate = self;
-    
+
     UIView *tableHeaderView = [[UIView alloc] initWithFrame:searchDisplayController.searchBar.frame];
     [tableHeaderView addSubview:searchDisplayController.searchBar];
     [_tableView setTableHeaderView:tableHeaderView];
 
-    searchedIcons = [NSMutableArray array];    
+    searchedIcons = [NSMutableArray array];
     isSearching = NO;
-    
+
 	return self;
 }
 
@@ -199,7 +199,7 @@ extern UIImage *imageFromName(NSString *name);
             alignmentText = @"Nothing";
         else if (indexPath.row == 1)
             alignmentText = @"Activator Action";
-        
+
         cell.textLabel.text = alignmentText;
         cell.accessoryType = indexPath.row == tapAction ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     }
@@ -235,11 +235,11 @@ extern UIImage *imageFromName(NSString *name);
 -(void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath
 {
 	UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-    
+
     if (indexPath.section == 0 && !isSearching)
     {
         tapAction = indexPath.row;
-        
+
         if (tapAction == 1) // Activator
         {
             id activator = objc_getClass("LAEventSettingsController");
@@ -248,16 +248,16 @@ extern UIImage *imageFromName(NSString *name);
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Protean" message:@"Activator must be installed to use this feature." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 [alert show];
             }
-            LAEventSettingsController *vc = [[objc_getClass("LAEventSettingsController") alloc] initWithModes:@[LAEventModeSpringBoard,LAEventModeApplication, LAEventModeLockScreen] eventName:[NSString stringWithFormat:@"%@%@", @"com.efrederickson.protean-",_identifier]];
+            LAEventSettingsController *vc = [[objc_getClass("LAEventSettingsController") alloc] initWithModes:@[LAEventModeSpringBoard,LAEventModeApplication, LAEventModeLockScreen] eventName:[NSString stringWithFormat:@"%@%@", @"com.shade.protean-",_identifier]];
             [self.rootController pushViewController:vc animated:YES];
         }
     }
     else
     {
         checkedIcon = cell.textLabel.text;
-        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/refreshStatusBar"), nil, nil, YES);
+        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/refreshStatusBar"), nil, nil, YES);
     }
-    
+
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
     [self updateSavedData];
     [tableView reloadData];
@@ -277,10 +277,10 @@ extern UIImage *imageFromName(NSString *name);
 }
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    
+
     UISearchBar *searchBar = searchDisplayController.searchBar;
     CGRect searchBarFrame = searchBar.frame;
-    
+
     searchBarFrame.origin.y = 0;
     searchDisplayController.searchBar.frame = searchBarFrame;
 }
@@ -305,7 +305,7 @@ extern UIImage *imageFromName(NSString *name);
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    
+
     ((UIView*)self.view).tintColor = nil;
     self.navigationController.navigationBar.tintColor = nil;
 }

@@ -3,8 +3,7 @@
 BOOL wasLowercased = NO;
 
 %hook SBStatusBarStateAggregator
-- (void)_resetTimeItemFormatter
-{
+- (void)_resetTimeItemFormatter {
 	%orig;
 
 	id enabled_ = [Protean getOrLoadSettings][@"enabled"];
@@ -12,25 +11,23 @@ BOOL wasLowercased = NO;
 
 	NSDateFormatter *formatter = MSHookIvar<NSDateFormatter*>(self, "_timeItemDateFormatter");
 
-	if (!formatter)
+	if (!formatter) {
 		return;
-	
+	}
+
 	NSString *format = [Protean getOrLoadSettings][@"timeFormat"];
-	if (format && enabled && format.length > 0)
+	if (format && enabled && format.length > 0) {
 		[formatter setDateFormat:format];
+	}
 
 	id lowercaseAMPM_ = [Protean getOrLoadSettings][@"lowercaseAMPM"];
 
-	if (lowercaseAMPM_ && [lowercaseAMPM_ boolValue] == YES && enabled)
-	{
+	if (lowercaseAMPM_ && [lowercaseAMPM_ boolValue] == YES && enabled) {
 		[formatter setAMSymbol:@"am"];
 		[formatter setPMSymbol:@"pm"];
 		wasLowercased = YES;
-	}
-	else
-	{
-		if (wasLowercased)
-		{
+	} else {
+		if (wasLowercased) {
 			[formatter setAMSymbol:@"AM"];
 			[formatter setPMSymbol:@"PM"];
 			wasLowercased = NO;
@@ -41,8 +38,7 @@ BOOL wasLowercased = NO;
 
 
 %hook UIStatusBarTimeItemView
-- (id)contentsImage
-{
+- (id)contentsImage {
 	CHECK_ENABLED(%orig);
 
 /*
@@ -57,8 +53,7 @@ BOOL wasLowercased = NO;
 	}
 */
 	id spellOut = [Protean getOrLoadSettings][@"spellOut"];
-	if ([spellOut boolValue])
-	{
+	if ([spellOut boolValue]) {
 		__strong NSString *&time = MSHookIvar<NSString *>(self, "_timeString");
 		time = nil;
 
@@ -73,8 +68,7 @@ BOOL wasLowercased = NO;
 
 		BOOL am = hour < 12;
 		hour = hour > 12 ? hour - 12 : hour;
-		if (hour == 0)
-		{
+		if (hour == 0) {
 			am = YES;
 			hour = 12;
 		}
@@ -82,13 +76,11 @@ BOOL wasLowercased = NO;
 		time = [NSString stringWithFormat:@"%@ %@ %@",
 			[formatter stringFromNumber:@(hour)],
 			minute == 0 ? @"o' clock"
-				: minute < 10 ? 
-					[NSString stringWithFormat:@"oh %@", [formatter stringFromNumber:@(minute)]] 
-					: [formatter stringFromNumber:@(minute)], 
+				: minute < 10 ?
+					[NSString stringWithFormat:@"oh %@", [formatter stringFromNumber:@(minute)]]
+					: [formatter stringFromNumber:@(minute)],
 			!am ? @"pm" : @"am"];
 	}
 	return %orig;
 }
 %end
-
-

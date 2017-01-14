@@ -6,7 +6,7 @@
 @end
 
 @interface PLBatteryPropertiesEntry// : PLEntry
-+(instancetype) batteryPropertiesEntry;
++ (instancetype)batteryPropertiesEntry;
 @property(readonly, nonatomic) BOOL draining;
 @property(readonly, nonatomic) BOOL isPluggedIn;
 @property(readonly, nonatomic) NSString *chargingState;
@@ -33,34 +33,34 @@
 - (id)init;
 @end
 
-struct RAWDATA {
-        BOOL itemIsEnabled[25]; 
-        BOOL timeString[64]; 
-        int gsmSignalStrengthRaw; 
-        int gsmSignalStrengthBars; 
-        BOOL serviceString[100]; 
-        BOOL serviceCrossfadeString[100]; 
-        BOOL serviceImages[2][100]; 
-        BOOL operatorDirectory[1024]; 
-        unsigned int serviceContentType; 
-        int wifiSignalStrengthRaw; 
-        int wifiSignalStrengthBars; 
-        unsigned int dataNetworkType; 
-        int batteryCapacity; 
-        unsigned int batteryState; 
+typedef struct {
+        BOOL itemIsEnabled[25];
+        BOOL timeString[64];
+        int gsmSignalStrengthRaw;
+        int gsmSignalStrengthBars;
+        BOOL serviceString[100];
+        BOOL serviceCrossfadeString[100];
+        BOOL serviceImages[2][100];
+        BOOL operatorDirectory[1024];
+        unsigned int serviceContentType;
+        int wifiSignalStrengthRaw;
+        int wifiSignalStrengthBars;
+        unsigned int dataNetworkType;
+        int batteryCapacity;
+        unsigned int batteryState;
         char batteryDetailString[150];
-        int bluetoothBatteryCapacity; 
-        int thermalColor; 
-        unsigned int thermalSunlightMode : 1; 
-        unsigned int slowActivity : 1; 
-        unsigned int syncActivity : 1; 
-        BOOL activityDisplayId[256]; 
-        unsigned int bluetoothConnected : 1; 
-        unsigned int displayRawGSMSignal : 1; 
-        unsigned int displayRawWifiSignal : 1; 
-        unsigned int locationIconType : 1; 
-        unsigned int quietModeInactive : 1; 
-        unsigned int tetheringConnectionCount; 
+        int bluetoothBatteryCapacity;
+        int thermalColor;
+        unsigned int thermalSunlightMode : 1;
+        unsigned int slowActivity : 1;
+        unsigned int syncActivity : 1;
+        BOOL activityDisplayId[256];
+        unsigned int bluetoothConnected : 1;
+        unsigned int displayRawGSMSignal : 1;
+        unsigned int displayRawWifiSignal : 1;
+        unsigned int locationIconType : 1;
+        unsigned int quietModeInactive : 1;
+        unsigned int tetheringConnectionCount;
     NSString *_doubleHeightStatus;
     BOOL _itemEnabled[30];
 } RAWDATA;
@@ -81,7 +81,7 @@ struct RAWDATA {
 
 NSNumberFormatter *stringFormatter = [[NSNumberFormatter alloc] init];
 NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
-unsigned int batteryState; 
+unsigned int batteryState;
 
 
 %hook UIStatusBarBatteryPercentItemView
@@ -91,11 +91,11 @@ unsigned int batteryState;
     batteryState = arg1.rawData->batteryState;
 
     char oldBattery[150];
-    
+
     strcpy(oldBattery, arg1.rawData->batteryDetailString);
-    
+
     NSString *batteryStr = [NSString stringWithUTF8String:oldBattery];
-    
+
     int changedBatteryStyle = [Protean getOrLoadSettings][@"batteryStyle"] ? [[Protean getOrLoadSettings][@"batteryStyle"] intValue] : 0;
     // 0: default
     // 1: remove percent
@@ -105,7 +105,7 @@ unsigned int batteryState;
     // 5. Real charge with 2 decimals
     // 6. Real charge with decimals and no percent
     // 7. Textual with "percent"
-    
+
     if (changedBatteryStyle == 1)
     {
         if ([batteryStr hasSuffix:@"%"]) // remove percent sign
@@ -315,7 +315,7 @@ unsigned int batteryState;
 	UIColor *color = [UIColor PF_colorWithHex:[Protean getOrLoadSettings][charging ? @"chargingPercentageColor" : @"notChargingPercentageColor"]];
 	if (color && [color _isSimilarToColor:[UIColor blackColor] withinPercentage:0.2] == NO)
 		original.image = [original.image _flatImageWithColor:color];
-    
+
 	return original;
 }
 %end

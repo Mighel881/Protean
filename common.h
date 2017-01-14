@@ -12,22 +12,10 @@ x; \
 return;\
 }
 
-#define LIBSTATUSBAR8 (objc_getClass("LibStatusBar8") != nil)
+#define LIBSTATUSBAR9 (objc_getClass("LibStatusBar9") != nil)
 
 #define SYSTEM_VERSION_EQUAL_TO(_gVersion)                  ( fabsf(NSFoundationVersionNumber - _gVersion) < DBL_EPSILON )
 #define SYSTEM_VERSION_GREATER_THAN(_gVersion)              ( NSFoundationVersionNumber >  _gVersion )
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(_gVersion)  ( NSFoundationVersionNumber > _gVersion || SYSTEM_VERSION_EQUAL_TO(_gVersion) )
 #define SYSTEM_VERSION_LESS_THAN(_gVersion)                 ( NSFoundationVersionNumber <  _gVersion )
 #define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(_gVersion)     ( NSFoundationVersionNumber < _gVersion || SYSTEM_VERSION_EQUAL_TO(_gVersion)  )
-
-#if DEBUG
-
-#ifndef RELEASE
-#define PROTEAN_VERSION @"2.0-52+debug"
-#else
-#define PROTEAN_VERSION @"2.0-52"
-#endif
-
-#else
-#define PROTEAN_VERSION @"2.0-52"
-#endif

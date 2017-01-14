@@ -17,14 +17,14 @@
 #import <SpringBoard/SBApplication.h>
 #import <QuartzCore/QuartzCore.h>
 
-@interface LibStatusBar8 : NSObject
+@interface LibStatusBar9 : NSObject
 +(BOOL) supported;
 +(void) addExtension:(NSString*)name identifier:(NSString*)identifier version:(NSString*)version;
 +(NSArray*) getCurrentExtensions;
 +(NSString*) getCurrentExtensionsString;
 @end
 
-@interface SBApplicationController 
+@interface SBApplicationController
 + (id)sharedInstance;
 - (id)applicationWithBundleIdentifier:(id)arg1;
 - (id)applicationWithDisplayIdentifier:(id)arg1;
@@ -711,7 +711,3 @@
 
 @interface UIStatusBarCustomItem : UIStatusBarItem
 @end
-
-
-
-

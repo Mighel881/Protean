@@ -3,7 +3,7 @@
 #import "PRFSSelector.h"
 #import <flipswitch/Flipswitch.h>
 
-#define PLIST_NAME @"/var/mobile/Library/Preferences/com.efrederickson.protean.settings.plist"
+#define PLIST_NAME @"/var/mobile/Library/Preferences/com.shade.protean.settings.plist"
 #define BUNDLE_PATH @"/Library/Protean/OrganizeIcons.bundle"
 #define TemplatePath @"/Library/Protean/FlipswitchTemplates/IconTemplate.bundle"
 
@@ -29,7 +29,7 @@ extern UIImage *resizeFSImage(UIImage *in, CGFloat size = 30);
 static UIImage *iconForFlipswitch(NSString *identifier)
 {
     NSBundle *templateBundle = [NSBundle bundleWithPath:TemplatePath];
-    
+
     UIImage *img = [UIImage imageWithContentsOfFile:[NSString stringWithFormat:@"%@/flipswitches/%@/Icon.png",BUNDLE_PATH,identifier]];
     return img ?: resizeFSImage([[[FSSwitchPanel sharedPanel] imageOfSwitchState:FSSwitchStateOn controlState:UIControlStateNormal forSwitchIdentifier:identifier usingTemplate:templateBundle] _flatImageWithColor:[UIColor blackColor]]);
 }
@@ -40,7 +40,7 @@ void updateFlipswitches()
 {
     flipswitches = [NSMutableArray array];
     FSSwitchPanel *fsp = [FSSwitchPanel sharedPanel];
-    
+
     for (NSString *identifier in fsp.sortedSwitchIdentifiers) {
         [flipswitches addObject:@{
                                   @"title": [[FSSwitchPanel sharedPanel] titleForSwitchIdentifier:identifier],
@@ -55,23 +55,23 @@ void updateFlipswitches()
 -(id)init
 {
 	if (!(self = [super init])) return nil;
-	
+
 	CGRect bounds = [[UIScreen mainScreen] bounds];
-	
+
 	_tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, bounds.size.height) style:UITableViewStyleGrouped];
 	_tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	_tableView.delegate = self;
 	_tableView.dataSource = self;
-	
+
 	return self;
 }
 
 -(void)viewDidLoad
 {
 	((UIViewController *)self).title = @"Flipswitches";
-	
+
 	[self setView:_tableView];
-    
+
 	[super viewDidLoad];
 }
 
@@ -87,7 +87,7 @@ void updateFlipswitches()
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    
+
     ((UIView*)self.view).tintColor = nil;
     self.navigationController.navigationBar.tintColor = nil;
 }
@@ -95,7 +95,7 @@ void updateFlipswitches()
 -(void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath
 {
 	UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-    
+
 	// Need to mimic what PSListController does when it handles didSelectRowAtIndexPath
 	// otherwise the child controller won't load
 	PRFSSelector* controller = [[PRFSSelector alloc]
@@ -104,7 +104,7 @@ void updateFlipswitches()
                                             ];
 	controller.rootController = self.rootController;
 	controller.parentController = self;
-	
+
 	[self pushController:controller];
 	[tableView deselectRowAtIndexPath:indexPath animated:true];
 }
@@ -119,14 +119,14 @@ void updateFlipswitches()
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
     if (cell == nil)
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
- 	
+
  	NSMutableDictionary *prefs = [NSMutableDictionary dictionaryWithContentsOfFile:PLIST_NAME] ?: [NSMutableDictionary dictionary];
  	BOOL enabled = [([prefs[@"flipswitches"] mutableCopy] ?: [NSMutableDictionary dictionary])[flipswitches[indexPath.row][@"identifier"]] boolValue] ?: NO;
  	cell.accessoryType = enabled ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
 
     cell.textLabel.text = flipswitches[indexPath.row][@"title"];
     cell.imageView.image = flipswitches[indexPath.row][@"icon"];
-    
+
     return cell;
 }
 

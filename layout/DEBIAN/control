@@ -1,12 +1,11 @@
-Package: org.thebigboss.protean
+Package: com.shade.protean
 Name: Protean
-Depends: firmware (>=7.0), mobilesubstrate, libstatusbar | libstatusbar8, applist, com.a3tweaks.flipswitch, preferenceloader
+Depends: firmware (>=7.0), mobilesubstrate, libstatusbar | libstatusbar9, applist, com.a3tweaks.flipswitch, preferenceloader
 Provides: com.n00neimp0rtant.opennotifier
 Conflicts: com.n00neimp0rtant.opennotifier, net.tateu.opennotifierbeta, net.tateu.opennotifier
 Version: 2.0
 Architecture: iphoneos-arm
 Description: Your status bar, your way.
-Depiction: http://moreinfo.thebigboss.org/moreinfo/depiction.php?file=proteanDp
-Maintainer: Elijah Frederickson <elijah.frederickson@gmail.com>
-Author: Elijah Frederickson <elijah.frederickson@gmail.com>
+Maintainer: Shade Zepheri <ziroalpha@gmail.com>
+Author: Shade Zepheri <ziroalpha@gmail.com>
 Section: Tweaks

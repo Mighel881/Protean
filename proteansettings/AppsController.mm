@@ -14,7 +14,7 @@
 - (void)sectionRequestedSectionReload:(id)section animated:(BOOL)animated;
 @end
 
-#define PLIST_NAME @"/var/mobile/Library/Preferences/com.efrederickson.protean.settings.plist"
+#define PLIST_NAME @"/var/mobile/Library/Preferences/com.shade.protean.settings.plist"
 
 @interface ALLinkCell : ALValueCell
 @end
@@ -55,11 +55,11 @@ void PR_AppsControllerNeedsToReload()
 -(void)updateDataSource:(NSString*)searchText
 {
 	NSNumber *iconSize = [NSNumber numberWithUnsignedInteger:ALApplicationIconSizeSmall];
-    
+
 	NSString *enabledList = @"";
     NSMutableDictionary *prefs = [NSMutableDictionary dictionaryWithContentsOfFile:PLIST_NAME];
     prefs = prefs ?: [NSMutableDictionary dictionary];
-    
+
     NSArray *apps = [[ALApplicationList sharedApplicationList] applications].allKeys;
 	for (NSString* identifier in prefs[@"images"])
 	{
@@ -71,7 +71,7 @@ void PR_AppsControllerNeedsToReload()
 	}
     enabledList = [enabledList stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@","]];
 	NSString* filter = (searchText && searchText.length > 0) ? [NSString stringWithFormat:@"displayName beginsWith[cd] '%@'", searchText] : nil;
-    
+
 	if (filter)
 	{
 		_dataSource.sectionDescriptors = [NSArray arrayWithObjects:
@@ -127,45 +127,45 @@ void PR_AppsControllerNeedsToReload()
 -(id)init
 {
 	if (!(self = [super init])) return nil;
-	
+
 	CGRect bounds = [[UIScreen mainScreen] bounds];
-	
+
 	_dataSource = [[ALApplicationTableDataSource alloc] init];
-    
+
 	_tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, bounds.size.height) style:UITableViewStyleGrouped];
 	_tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	_tableView.delegate = self;
 	_tableView.dataSource = _dataSource;
 	_dataSource.tableView = _tableView;
 	[self updateDataSource:nil];
-	
+
     _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
     _searchBar.delegate = self;
     _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 	if ([_searchBar respondsToSelector:@selector(setUsesEmbeddedAppearance:)])
 		[_searchBar setUsesEmbeddedAppearance:true];
 
-    
+
     searchDisplayController = [[UISearchDisplayController alloc] initWithSearchBar:_searchBar contentsController:(UIViewController*)self];
     searchDisplayController.delegate = self;
     searchDisplayController.searchResultsDataSource = _dataSource;
     searchDisplayController.searchResultsDelegate = self;
-    
+
     UIView *tableHeaderView = [[UIView alloc] initWithFrame:searchDisplayController.searchBar.frame];
     [tableHeaderView addSubview:searchDisplayController.searchBar];
     [_tableView setTableHeaderView:tableHeaderView];
-    
+
     isSearching = NO;
-    
+
 	return self;
 }
 
 -(void)viewDidLoad
 {
 	((UIViewController *)self).title = @"Applications";
-	
+
 	[self.view addSubview:_tableView];
-    
+
 	[super viewDidLoad];
 }
 
@@ -176,7 +176,7 @@ void PR_AppsControllerNeedsToReload()
         [self updateDataSource:nil];
         reload = NO;
     }
-    
+
     ((UIView*)self.view).tintColor = self.tintColor;
     self.navigationController.navigationBar.tintColor = self.tintColor;
 
@@ -194,13 +194,13 @@ void PR_AppsControllerNeedsToReload()
     UISearchBar *searchBar = searchDisplayController.searchBar;
     if (!searchBar) return;
     CGRect searchBarFrame = searchBar.frame;
-    
+
     if (isSearching) {
         searchBarFrame.origin.y = 0;
     } else {
         searchBarFrame.origin.y = 0; //MAX(0, scrollView.contentOffset.y + scrollView.contentInset.top);
     }
-    
+
     searchDisplayController.searchBar.frame = searchBarFrame;
 }
 
@@ -218,7 +218,7 @@ void PR_AppsControllerNeedsToReload()
 -(void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath
 {
 	UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-    
+
 	// Need to mimic what PSListController does when it handles didSelectRowAtIndexPath
 	// otherwise the child controller won't load
 	PRIconSelectorController* controller = [[PRIconSelectorController alloc]
@@ -227,7 +227,7 @@ void PR_AppsControllerNeedsToReload()
                                                 ];
 	controller.rootController = self.rootController;
 	controller.parentController = self;
-	
+
 	[self pushController:controller];
 	[tableView deselectRowAtIndexPath:indexPath animated:true];
 }
@@ -236,7 +236,7 @@ void PR_AppsControllerNeedsToReload()
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    
+
     ((UIView*)self.view).tintColor = nil;
     self.navigationController.navigationBar.tintColor = nil;
 }

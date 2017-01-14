@@ -4,7 +4,7 @@
 #import <SettingsKit/SKSpecifierParser.h>
 #import <objc/runtime.h>
 #import <Preferences/PSTableCell.h>
-#define PLIST_NAME @"/var/mobile/Library/Preferences/com.efrederickson.protean.settings.plist"
+#define PLIST_NAME @"/var/mobile/Library/Preferences/com.shade.protean.settings.plist"
 #import <objc/runtime.h>
 #import "../Protean.h"
 
@@ -27,7 +27,7 @@ NSDictionary *extendedOptionsCounts = @{
     @3: @1,
     @5: @1,
     @8: @0, // <- battery percentage, TODO
-    @4: @2,  
+    @4: @2,
 };
 
 @interface PSTableCell (Protean)
@@ -56,10 +56,10 @@ UIImage *resizeImage(UIImage *icon)
 {
 	float maxWidth = 20.0f;
 	float maxHeight = 20.0f;
-    
+
 	CGSize size = CGSizeMake(maxWidth, maxHeight);
 	CGFloat scale = 1.0f;
-    
+
 	// the scale logic below was taken from
 	// http://developer.appcelerator.com/question/133826/detecting-new-ipad-3-dpi-and-retina
 	if ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)])
@@ -68,22 +68,22 @@ UIImage *resizeImage(UIImage *icon)
 		UIGraphicsBeginImageContextWithOptions(size, false, scale);
 	}
 	else UIGraphicsBeginImageContext(size);
-    
+
 	// Resize image to status bar size and center it
 	// make sure the icon fits within the bounds
 	CGFloat width = MIN(icon.size.width, maxWidth);
 	CGFloat height = MIN(icon.size.height, maxHeight);
-    
+
 	CGFloat left = MAX((maxWidth-width)/2, 0);
 	left = left > (maxWidth/2) ? maxWidth-(maxWidth/2) : left;
-    
+
 	CGFloat top = MAX((maxHeight-height)/2, 0);
 	top = top > (maxHeight/2) ? maxHeight-(maxHeight/2) : top;
-    
+
 	[icon drawInRect:CGRectMake(left, top, width, height)];
 	icon = UIGraphicsGetImageFromCurrentImageContext();
 	UIGraphicsEndImageContext();
-    
+
 	return icon;
 }
 
@@ -103,24 +103,24 @@ UIImage *resizeImage(UIImage *icon)
 {
     NSMutableDictionary *prefs = [NSMutableDictionary dictionaryWithContentsOfFile:PLIST_NAME];
     prefs = prefs ?: [NSMutableDictionary dictionary];
-    
+
     prefs[@"images"] = prefs[@"images"] ? [prefs[@"images"] mutableCopy]: [NSMutableDictionary dictionary];
     prefs[@"images"][_id] = [checkedIcon isEqual:@"Default"] ? @"" : checkedIcon;
-    
+
     prefs[@"tapActions"] = prefs[@"tapActions"] ? [prefs[@"tapActions"] mutableCopy]: [NSMutableDictionary dictionary];
     prefs[@"tapActions"][_id] = [NSNumber numberWithInt:tapAction == 1?2:0] ?: @0;
-    
+
     [prefs writeToFile:PLIST_NAME atomically:YES];
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/reloadSettings"), nil, nil, YES);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/reloadSettings"), nil, nil, YES);
 }
 
 -(id)init
 {
     checkedIcon = @"";
     tapAction = 0;
-    
+
 	if ((self = [super init]) == nil) return nil;
-	
+
 	if (!defaultIcon)
         defaultIcon = [[ALApplicationList sharedApplicationList] iconOfSize:ALApplicationIconSizeSmall forDisplayIdentifier:@"com.apple.WebSheet"];
 	if (!statusIcons)
@@ -128,7 +128,7 @@ UIImage *resizeImage(UIImage *icon)
 		statusIcons = [[NSMutableArray alloc] init];
 		NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:SilverIconRegexPattern
                                                                                options:NSRegularExpressionCaseInsensitive error:nil];
-        
+
 		for (NSString* path in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:iconPath error:nil])
 		{
 			NSTextCheckingResult* match = [regex firstMatchInString:path options:0 range:NSMakeRange(0, path.length)];
@@ -144,30 +144,30 @@ UIImage *resizeImage(UIImage *icon)
             NSString* name = [path substringWithRange:[match rangeAtIndex:1]];
             if (![statusIcons containsObject:name]) [statusIcons addObject:name];
         }
-		        
+
         regex = [NSRegularExpression regularExpressionWithPattern:@"Black_ON_(.*?)(?:@.*|)(?:~.*|).png"
                                                           options:NSRegularExpressionCaseInsensitive error:nil];
-        
+
         for (NSString* path in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:@"/System/Library/Frameworks/UIKit.framework" error:nil])
         {
             NSTextCheckingResult* match = [regex firstMatchInString:path options:0 range:NSMakeRange(0, path.length)];
             if (!match) continue;
             NSString* name = [path substringWithRange:[match rangeAtIndex:1]];
-            
+
             if ([name hasPrefix:@"Count"])
                 continue;
-            
+
             if (![statusIcons containsObject:name]) [statusIcons addObject:name];
         }
 	}
-    
-    
+
+
     NSMutableDictionary *prefs = [NSMutableDictionary dictionaryWithContentsOfFile:PLIST_NAME];
     prefs = prefs ?: [NSMutableDictionary dictionary];
-    
+
     checkedIcon = ([prefs[@"images"] mutableCopy] ?: [NSMutableDictionary dictionary])[_id] ?: @"";
     tapAction = [([prefs[@"tapActions"] mutableCopy] ?: [NSMutableDictionary dictionary])[_id] intValue] == 2 ? 1 : 0;
-    
+
     CGRect bounds = [[UIScreen mainScreen] bounds];
     _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, bounds.size.width, bounds.size.height) style:UITableViewStyleGrouped];
 	_tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -178,9 +178,9 @@ UIImage *resizeImage(UIImage *icon)
     [_tableView setAllowsMultipleSelection:NO];
     [_tableView setAllowsSelectionDuringEditing:YES];
     [_tableView setAllowsMultipleSelectionDuringEditing:NO];
-    
+
     [self setView:_tableView];
-    
+
     [self setTitle:_appName];
 
     if ([canHaveImages containsObject:[NSNumber numberWithInt:_raw_id]])
@@ -201,18 +201,18 @@ UIImage *resizeImage(UIImage *icon)
         _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
         _searchBar.delegate = self;
         _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    
+
         searchDisplayController = [[UISearchDisplayController alloc] initWithSearchBar:_searchBar contentsController:(UIViewController*)self];
         searchDisplayController.delegate = self;
         searchDisplayController.searchResultsDataSource = self;
         searchDisplayController.searchResultsDelegate = self;
-    
+
         UIView *tableHeaderView = [[UIView alloc] initWithFrame:searchDisplayController.searchBar.frame];
         [tableHeaderView addSubview:searchDisplayController.searchBar];
         [_tableView setTableHeaderView:tableHeaderView];
 
     }
-    searchedIcons = [NSMutableArray array];    
+    searchedIcons = [NSMutableArray array];
     isSearching = NO;
 
 	return self;
@@ -254,7 +254,7 @@ UIImage *resizeImage(UIImage *icon)
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = nil;
-    
+
     if (indexPath.section == 0 && isSearching == NO)
     {
         cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
@@ -266,7 +266,7 @@ UIImage *resizeImage(UIImage *icon)
             alignmentText = @"Nothing";
         else if (indexPath.row == 1)
             alignmentText = @"Activator Action";
-        
+
         cell.textLabel.text = alignmentText;
         cell.accessoryType = indexPath.row == tapAction ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     }
@@ -284,7 +284,7 @@ UIImage *resizeImage(UIImage *icon)
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             UISwitch *switchView = [[UISwitch alloc] initWithFrame:CGRectZero];
             cell.accessoryView = switchView;
-            BOOL enabled = [[NSDictionary dictionaryWithContentsOfFile:@"/User/Library/Preferences/com.efrederickson.protean.settings.plist"][@"showSignalRSSI"] boolValue];
+            BOOL enabled = [[NSDictionary dictionaryWithContentsOfFile:@"/User/Library/Preferences/com.shade.protean.settings.plist"][@"showSignalRSSI"] boolValue];
             [switchView setOn:enabled animated:NO];
             [switchView addTarget:self action:@selector(toggleSignalRSSI:) forControlEvents:UIControlEventValueChanged];
             return cell;
@@ -420,7 +420,7 @@ UIImage *resizeImage(UIImage *icon)
     if (indexPath.section == 0 && !isSearching)
     {
         tapAction = indexPath.row;
-        
+
         if (tapAction == 1) // Activator
         {
             id activator = objc_getClass("LAEventSettingsController");
@@ -429,7 +429,7 @@ UIImage *resizeImage(UIImage *icon)
                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Protean" message:@"Activator must be installed to use this feature." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 [alert show];
             }
-            LAEventSettingsController *vc = [[objc_getClass("LAEventSettingsController") alloc] initWithModes:@[LAEventModeSpringBoard,LAEventModeApplication, LAEventModeLockScreen] eventName:[NSString stringWithFormat:@"%@%@", @"com.efrederickson.protean-",_id]];
+            LAEventSettingsController *vc = [[objc_getClass("LAEventSettingsController") alloc] initWithModes:@[LAEventModeSpringBoard,LAEventModeApplication, LAEventModeLockScreen] eventName:[NSString stringWithFormat:@"%@%@", @"com.shade.protean-",_id]];
             [self.rootController pushViewController:vc animated:YES];
         }
     }
@@ -438,9 +438,9 @@ UIImage *resizeImage(UIImage *icon)
     else
     {
         checkedIcon = cell.textLabel.text;
-        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/refreshStatusBar"), nil, nil, YES);
+        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/refreshStatusBar"), nil, nil, YES);
     }
-    
+
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
     [self updateSavedData];
     [_tableView reloadData];
@@ -460,7 +460,7 @@ UIImage *resizeImage(UIImage *icon)
 
     UIView *footer = [[UIView alloc] initWithFrame:CGRectMake(0, 5, [UIScreen mainScreen].bounds.size.width, 80)];
     footer.backgroundColor = [UIColor clearColor];
-    
+
     UILabel *lbl = [[UILabel alloc] initWithFrame:footer.frame];
     lbl.backgroundColor = [UIColor clearColor];
     lbl.text = [canHaveImages containsObject:[NSNumber numberWithInt:_raw_id]] ? @"\nRespring to apply changes\nto System Icons." : @"Sorry, this icon cannot be\nthemed with Protean.";
@@ -470,7 +470,7 @@ UIImage *resizeImage(UIImage *icon)
     lbl.textColor = [UIColor darkGrayColor];
     lbl.lineBreakMode = NSLineBreakByWordWrapping;
     [footer addSubview:lbl];
-    
+
     return footer;
 }
 
@@ -510,10 +510,10 @@ UIImage *resizeImage(UIImage *icon)
 }
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    
+
     UISearchBar *searchBar = searchDisplayController.searchBar;
     CGRect searchBarFrame = searchBar.frame;
-    
+
     searchBarFrame.origin.y = 0;
     searchDisplayController.searchBar.frame = searchBarFrame;
 }
@@ -538,7 +538,7 @@ UIImage *resizeImage(UIImage *icon)
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    
+
     ((UIView*)self.view).tintColor = nil;
     self.navigationController.navigationBar.tintColor = nil;
 }
@@ -562,88 +562,88 @@ UIImage *resizeImage(UIImage *icon)
 {
     UISwitch* switchControl = sender;
     BOOL showRssi = switchControl.on;
-    NSString *plistName = [NSString stringWithFormat:@"/User/Library/Preferences/com.efrederickson.protean.settings.plist"];
+    NSString *plistName = [NSString stringWithFormat:@"/User/Library/Preferences/com.shade.protean.settings.plist"];
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:plistName];
     [dict setObject:@(showRssi) forKey:@"showSignalRSSI"];
     [dict writeToFile:plistName atomically:YES];
 
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/reloadSettings"), nil, nil, YES);
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/refreshStatusBar"), nil, nil, YES);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/reloadSettings"), nil, nil, YES);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/refreshStatusBar"), nil, nil, YES);
 }
 
 -(void) toggleServiceIsTimeStr:(id) sender
 {
     UISwitch* switchControl = sender;
     BOOL value = switchControl.on;
-    NSString *plistName = [NSString stringWithFormat:@"/User/Library/Preferences/com.efrederickson.protean.settings.plist"];
+    NSString *plistName = [NSString stringWithFormat:@"/User/Library/Preferences/com.shade.protean.settings.plist"];
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:plistName];
     [dict setObject:@(value) forKey:@"serviceIsTimeString"];
     [dict writeToFile:plistName atomically:YES];
 
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/reloadSettings"), nil, nil, YES);
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/refreshStatusBar"), nil, nil, YES);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/reloadSettings"), nil, nil, YES);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/refreshStatusBar"), nil, nil, YES);
 }
 
 -(void) toggleShowLSTime:(id)sender
 {
     UISwitch* switchControl = sender;
     BOOL value = switchControl.on;
-    NSString *plistName = [NSString stringWithFormat:@"/User/Library/Preferences/com.efrederickson.protean.settings.plist"];
+    NSString *plistName = [NSString stringWithFormat:@"/User/Library/Preferences/com.shade.protean.settings.plist"];
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:plistName];
     [dict setObject:@(value) forKey:@"showLSTime"];
     [dict writeToFile:plistName atomically:YES];
 
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/reloadSettings"), nil, nil, YES);
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/refreshStatusBar"), nil, nil, YES);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/reloadSettings"), nil, nil, YES);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/refreshStatusBar"), nil, nil, YES);
 
 }
 -(void) toggleSpellOutTime:(id)sender
 {
     UISwitch* switchControl = sender;
     BOOL value = switchControl.on;
-    NSString *plistName = [NSString stringWithFormat:@"/User/Library/Preferences/com.efrederickson.protean.settings.plist"];
+    NSString *plistName = [NSString stringWithFormat:@"/User/Library/Preferences/com.shade.protean.settings.plist"];
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:plistName];
     [dict setObject:@(value) forKey:@"spellOut"];
     [dict writeToFile:plistName atomically:YES];
 
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/reloadSettings"), nil, nil, YES);
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/refreshStatusBar"), nil, nil, YES);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/reloadSettings"), nil, nil, YES);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/refreshStatusBar"), nil, nil, YES);
 
 }
 -(void) toggleLowercaseAMPM:(id)sender
 {
     UISwitch* switchControl = sender;
     BOOL value = switchControl.on;
-    NSString *plistName = [NSString stringWithFormat:@"/User/Library/Preferences/com.efrederickson.protean.settings.plist"];
+    NSString *plistName = [NSString stringWithFormat:@"/User/Library/Preferences/com.shade.protean.settings.plist"];
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:plistName];
     [dict setObject:@(value) forKey:@"lowercaseAMPM"];
     [dict writeToFile:plistName atomically:YES];
 
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/reloadSettings"), nil, nil, YES);
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/refreshStatusBar"), nil, nil, YES);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/reloadSettings"), nil, nil, YES);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/refreshStatusBar"), nil, nil, YES);
 
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     if(textField.tag == 0)
     {
-        NSString *plistName = [NSString stringWithFormat:@"/User/Library/Preferences/com.efrederickson.protean.settings.plist"];
+        NSString *plistName = [NSString stringWithFormat:@"/User/Library/Preferences/com.shade.protean.settings.plist"];
         NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:plistName];
         [dict setObject:textField.text forKey:@"serviceString"];
         [dict writeToFile:plistName atomically:YES];
 
-        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/reloadSettings"), nil, nil, YES);
-        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/refreshStatusBar"), nil, nil, YES);
+        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/reloadSettings"), nil, nil, YES);
+        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/refreshStatusBar"), nil, nil, YES);
     }
     else if (textField.tag == 1)
     {
-        NSString *plistName = [NSString stringWithFormat:@"/User/Library/Preferences/com.efrederickson.protean.settings.plist"];
+        NSString *plistName = [NSString stringWithFormat:@"/User/Library/Preferences/com.shade.protean.settings.plist"];
         NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile:plistName];
         [dict setObject:textField.text forKey:@"timeFormat"];
         [dict writeToFile:plistName atomically:YES];
 
-        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/reloadSettings"), nil, nil, YES);
-        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.efrederickson.protean/refreshStatusBar"), nil, nil, YES);
+        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/reloadSettings"), nil, nil, YES);
+        CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.shade.protean/refreshStatusBar"), nil, nil, YES);
     }
     [textField resignFirstResponder];
     return YES;

@@ -5,8 +5,7 @@
 %group SpringBoard
 %hook FSSwitchMainPanel
 
-- (FSSwitchState)stateForSwitchIdentifier:(NSString *)switchIdentifier
-{
+- (FSSwitchState)stateForSwitchIdentifier:(NSString *)switchIdentifier {
     FSSwitchState ret = %orig;
     CHECK_ENABLED(ret);
 
@@ -17,18 +16,15 @@
     id showWhenOff_ = [Protean getOrLoadSettings][@"showWhenOffFlipswitches"][switchIdentifier];
     BOOL showWhenOff = showWhenOff_ ? [showWhenOff_ boolValue] : NO;
 
-    if (enabled && ((ret == FSSwitchStateOn && showWhenOff == NO) || alwaysShow || (ret == FSSwitchStateOff && showWhenOff)))
-    {
+    if (enabled && ((ret == FSSwitchStateOn && showWhenOff == NO) || alwaysShow || (ret == FSSwitchStateOff && showWhenOff))) {
         [PRStatusApps showIconForFlipswitch:switchIdentifier];
-    }
-    else
+    } else {
         [PRStatusApps hideIconFor:switchIdentifier];
-
+    }
     return ret;
 }
 
-- (void)setState:(FSSwitchState)state forSwitchIdentifier:(NSString *)switchIdentifier
-{
+- (void)setState:(FSSwitchState)state forSwitchIdentifier:(NSString *)switchIdentifier {
     %orig;
     CHECK_ENABLED();
 
@@ -39,17 +35,14 @@
     id showWhenOff_ = [Protean getOrLoadSettings][@"showWhenOffFlipswitches"][switchIdentifier];
     BOOL showWhenOff = showWhenOff_ ? [showWhenOff_ boolValue] : NO;
 
-    if (enabled && ((state == FSSwitchStateOn && showWhenOff == NO) || alwaysShow || (state == FSSwitchStateOff && showWhenOff)))
-    {
+    if (enabled && ((state == FSSwitchStateOn && showWhenOff == NO) || alwaysShow || (state == FSSwitchStateOff && showWhenOff))) {
         [PRStatusApps showIconForFlipswitch:switchIdentifier];
+    } else {
+      [PRStatusApps hideIconFor:switchIdentifier];
     }
-    else
-        [PRStatusApps hideIconFor:switchIdentifier];
-
 }
 
-- (void)stateDidChangeForSwitchIdentifier:(NSString *)switchIdentifier
-{
+- (void)stateDidChangeForSwitchIdentifier:(NSString *)switchIdentifier {
     %orig;
     CHECK_ENABLED();
 
@@ -61,18 +54,16 @@
     id showWhenOff_ = [Protean getOrLoadSettings][@"showWhenOffFlipswitches"][switchIdentifier];
     BOOL showWhenOff = showWhenOff_ ? [showWhenOff_ boolValue] : NO;
 
-    if (enabled && ((state == FSSwitchStateOn && showWhenOff == NO) || alwaysShow || (state == FSSwitchStateOff && showWhenOff)))
-    {
+    if (enabled && ((state == FSSwitchStateOn && showWhenOff == NO) || alwaysShow || (state == FSSwitchStateOff && showWhenOff))) {
         [PRStatusApps showIconForFlipswitch:switchIdentifier];
-    }
-    else
+    } else {
         [PRStatusApps hideIconFor:switchIdentifier];
+    }
 }
 %end
 %end
 
-UIImage *resizeImage(UIImage *icon)
-{
+UIImage *resizeImage(UIImage *icon) {
     CGSize size = icon.size;
     CGFloat scale = 10 / size.height;
     size.height *= scale;
@@ -88,38 +79,36 @@ UIImage *resizeImage(UIImage *icon)
     return icon;
 }
 
-%ctor
-{
-    if ([[[NSBundle mainBundle] bundleIdentifier] isEqual:@"com.apple.springboard"])
-    {
+%ctor {
+    if ([[[NSBundle mainBundle] bundleIdentifier] isEqual:@"com.apple.springboard"]) {
         %init(SpringBoard);
 
         [NSFileManager.defaultManager createDirectoryAtPath:@"/Library/Protean/protean-fscache" withIntermediateDirectories:YES attributes:nil error:nil];
-        for (NSString *switchIdentifier in FSSwitchPanel.sharedPanel.switchIdentifiers)
-        {
+        for (NSString *switchIdentifier in FSSwitchPanel.sharedPanel.switchIdentifiers) {
             NSBundle *templateBundle = nil;
-            if (!templateBundle) 
-                templateBundle = [NSBundle bundleWithPath:@"/Library/Protean/FlipswitchTemplates/IconTemplate.bundle"];
-
-            UIImage *img = [[FSSwitchPanel sharedPanel] 
+            if (!templateBundle) {
+              templateBundle = [NSBundle bundleWithPath:@"/Library/Protean/FlipswitchTemplates/IconTemplate.bundle"];
+            }
+            UIImage *img = [[FSSwitchPanel sharedPanel]
                 imageOfSwitchState:FSSwitchStateOff
                 controlState:UIControlStateNormal forSwitchIdentifier:switchIdentifier usingTemplate:templateBundle];
             NSString *filePath = nil;
-            if (UIScreen.mainScreen.scale > 1)
-                filePath = [NSString stringWithFormat:@"/Library/Protean/protean-fscache/%@-off@%.0fx.png",switchIdentifier, UIScreen.mainScreen.scale];
-            else
-                filePath = [NSString stringWithFormat:@"/Library/Protean/protean-fscache/%@-off.png",switchIdentifier];
+            if (UIScreen.mainScreen.scale > 1) {
+              filePath = [NSString stringWithFormat:@"/Library/Protean/protean-fscache/%@-off@%.0fx.png",switchIdentifier, UIScreen.mainScreen.scale];
+            } else {
+              filePath = [NSString stringWithFormat:@"/Library/Protean/protean-fscache/%@-off.png",switchIdentifier];
+            }
 
             [UIImagePNGRepresentation(resizeImage(img)) writeToFile:filePath atomically:YES];
 
-            img = [[FSSwitchPanel sharedPanel] 
+            img = [[FSSwitchPanel sharedPanel]
                 imageOfSwitchState:FSSwitchStateOn
                 controlState:UIControlStateNormal forSwitchIdentifier:switchIdentifier usingTemplate:templateBundle];
-            if (UIScreen.mainScreen.scale > 1)
-                filePath = [NSString stringWithFormat:@"/Library/Protean/protean-fscache/%@-on@%.0fx.png",switchIdentifier, UIScreen.mainScreen.scale];
-            else
-                filePath = [NSString stringWithFormat:@"/Library/Protean/protean-fscache/%@-on.png",switchIdentifier];
-
+            if (UIScreen.mainScreen.scale > 1) {
+              filePath = [NSString stringWithFormat:@"/Library/Protean/protean-fscache/%@-on@%.0fx.png",switchIdentifier, UIScreen.mainScreen.scale];
+            } else {
+              filePath = [NSString stringWithFormat:@"/Library/Protean/protean-fscache/%@-on.png",switchIdentifier];
+            }
             [UIImagePNGRepresentation(resizeImage(img)) writeToFile:filePath atomically:YES];
         }
     }

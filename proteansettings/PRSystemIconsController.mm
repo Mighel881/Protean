@@ -2,7 +2,7 @@
 #import <AppList/AppList.h>
 #import <objcipc/objcipc.h>
 #import "PRSysIconSelectorController.h"
-#define PLIST_NAME @"/var/mobile/Library/Preferences/com.efrederickson.protean.settings.plist"
+#define PLIST_NAME @"/var/mobile/Library/Preferences/com.shade.protean.settings.plist"
 
 
 @interface PSViewController ()
@@ -42,28 +42,28 @@ extern NSNumberFormatter *numberFormatter;
 NSMutableArray *mapSettingsForSysIcons()
 {
     static NSArray *systemItems = @[@0, @1, @2, @3, @4, @5, @7, @8, @9, @10, @11, @12, @13, @16, @17, @19, @20, @21, @22, @23, @24, @28];
-    
+
     NSMutableArray *mapped = [NSMutableArray array];
-    
+
     NSDictionary *prefs = [NSDictionary
                            dictionaryWithContentsOfFile:PLIST_NAME];
     if (prefs == nil)
         prefs = [NSDictionary dictionary];
-    
+
     for (id key in prefs)
     {
         NSNumber *num = [numberFormatter numberFromString:key];
         if (num == nil)
             continue;
-        
+
         if ([systemItems containsObject:num] == NO)
             continue; // Not an allowed/actual system item
-        
+
         NSMutableDictionary *d = prefs[key];
-        
+
         [mapped addObject:d];
     }
-    
+
     return mapped;
 }
 
@@ -79,12 +79,12 @@ NSMutableArray *mapSettingsForSysIcons()
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         [cell setSelectionStyle:UITableViewCellSelectionStyleBlue];
     }
-    
+
     NSString *desc = [mapSettingsForSysIcons() objectAtIndex:indexPath.row][@"identifier"];
-    
+
     cell.textLabel.text = nameForDescription(desc);
     cell.imageView.image = iconForDescription(desc);
-    
+
     return cell;
 }
 
@@ -103,25 +103,25 @@ NSMutableArray *mapSettingsForSysIcons()
     if ((self = [super initForContentSize:size]))
     {
         self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height) style:UITableViewStyleGrouped];
-        
+
         [self.tableView setDelegate:self];
         [self.tableView setDataSource:self];
         [self.tableView setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
         [self.tableView setEditing:NO];
         [self.tableView setAllowsSelection:YES];
-        
+
         [self setView:self.tableView];
     }
 
     ((UIViewController *)self).title = @"System Icons";
-    
+
     return self;
 }
 
 -(void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath*)indexPath
 {
 	UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-    
+
 	// Need to mimic what PSListController does when it handles didSelectRowAtIndexPath
 	// otherwise the child controller won't load
 	PRSysIconSelectorController* controller = [[PRSysIconSelectorController alloc]
@@ -131,7 +131,7 @@ NSMutableArray *mapSettingsForSysIcons()
                                             ];
 	controller.rootController = self.rootController;
 	controller.parentController = self;
-	
+
 	[self pushController:controller];
 	[tableView deselectRowAtIndexPath:indexPath animated:true];
 }
@@ -147,7 +147,7 @@ NSMutableArray *mapSettingsForSysIcons()
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    
+
     ((UIView*)self.view).tintColor = nil;
     self.navigationController.navigationBar.tintColor = nil;
 }
